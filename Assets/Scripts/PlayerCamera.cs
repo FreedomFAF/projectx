@@ -12,11 +12,9 @@ public class PlayerCamera : MonoBehaviour
 
     void Update()
     {
-        Vector3 target = Player.position + (-Player.transform.forward * distance);
+        Vector3 target = Player.position;
         target += Vector3.up * height;
         transform.position = Vector3.SmoothDamp(transform.position, target, ref currentVelocity, smoothTime);
-        transform.LookAt(Player);
+        //transform.LookAt(Player);
     }
 }
-
-
