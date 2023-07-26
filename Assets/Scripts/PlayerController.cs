@@ -5,20 +5,54 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float _speed = 16;
+    public static int indexCount = 0;
+    public int characterIndex;
+
+    public bool selected = false;
     public GameObject player;
     public float turnSpeed;
     public Camera camera;
+    
+    public Behaviour halo;
 
     public Vector3 lastClickedLocation;
 
     private void Awake(){
+        PlayerController.indexCount += 1;
+        characterIndex = PlayerController.indexCount;
+        
         camera = GameObject.Find("Camera").GetComponent<Camera>();
         Debug.Log(camera);
         lastClickedLocation = transform.position;
+        halo = (Behaviour)GetComponent("Halo");
+        halo.enabled = false;
+
+        if (characterIndex == 1){
+            selected = true;
+            halo.enabled = true;
+        }
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(1)){
+        if (Input.GetKeyDown("1")){
+            if (characterIndex == 1){
+                selected = true;
+                halo.enabled = true;
+            }else{
+                selected = false;
+                halo.enabled = false;
+            }
+        }else if (Input.GetKeyDown("2")){
+            if (characterIndex == 2){
+                selected = true;
+                halo.enabled = true;
+            }else{
+                selected = false;
+                halo.enabled = false;
+            }
+        }
+
+        if (Input.GetMouseButtonDown(1) && selected){
             Vector3 mousePosition = Input.mousePosition;
             Ray mouseClickRay = camera.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(mouseClickRay, out RaycastHit mouseClickHit)){
