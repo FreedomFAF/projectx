@@ -15,7 +15,10 @@ public class PlayerController : MonoBehaviour
     
     public Behaviour halo;
 
-    public Vector3 lastClickedLocation;
+    public List<Vector3> moveLocations;
+
+    public GameObject attackTarget;
+
 
     private void Awake(){
         PlayerController.indexCount += 1;
@@ -23,7 +26,6 @@ public class PlayerController : MonoBehaviour
         
         camera = GameObject.Find("Camera").GetComponent<Camera>();
         Debug.Log(camera);
-        lastClickedLocation = transform.position;
         halo = (Behaviour)GetComponent("Halo");
         halo.enabled = false;
 
@@ -56,12 +58,21 @@ public class PlayerController : MonoBehaviour
             Vector3 mousePosition = Input.mousePosition;
             Ray mouseClickRay = camera.ScreenPointToRay(mousePosition);
             if (Physics.Raycast(mouseClickRay, out RaycastHit mouseClickHit)){
-               lastClickedLocation = new Vector3(mouseClickHit.point.x, transform.position.y, mouseClickHit.point.z);
+                if (Input.GetKey("left shift")){
+                    moveLocations.Add(new Vector3(mouseClickHit.point.x, transform.position.y, mouseClickHit.point.z));
+                }else{
+                    moveLocations.Clear();
+                    moveLocations.Add(new Vector3(mouseClickHit.point.x, transform.position.y, mouseClickHit.point.z));
+                }
             }
         }
 
-        if (lastClickedLocation != transform.position){
-            transform.position = Vector3.MoveTowards(transform.position, lastClickedLocation, _speed * Time.deltaTime);
+        if (moveLocations.Count > 0){
+            if (moveLocations[0] == transform.position){
+                moveLocations.RemoveAt(0);
+            }else{
+                transform.position = Vector3.MoveTowards(transform.position, moveLocations[0], _speed * Time.deltaTime);
+            }
         }
 
         Ray ray = camera.ScreenPointToRay(Input.mousePosition);
